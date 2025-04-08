@@ -5,9 +5,11 @@ from typing import List, Dict, Union, Optional
 
 class InfoMP:
     """
-    Objeto que registra um Mandado de Prisãa
+    Objeto que registra um Mandado de Prisão
     """
-    def __init__(self, nome, data, endereco, situacao, id_mp=None, local=None, fotos=None):
+    def __init__(self, nome, data, endereco, situacao, id_mp=None, local=None, fotos=None,
+                 nome_mae=None, nome_pai=None, cpf=None, status_mp=None,
+                 numero_mp=None, emissao_mp=None, artigos_mp=None, informe_equipe_aguia=None):
         self.id_mp = id_mp
         self.nome = nome
         self.data = data
@@ -15,6 +17,14 @@ class InfoMP:
         self.situacao = situacao
         self.local = local
         self.fotos = fotos
+        self.nome_mae = nome_mae
+        self.nome_pai = nome_pai
+        self.cpf = cpf
+        self.status_mp = status_mp
+        self.numero_mp = numero_mp
+        self.emissao_mp = emissao_mp
+        self.artigos_mp = artigos_mp
+        self.informe_equipe_aguia = informe_equipe_aguia
 
     def cadastro_mp_bd(self):
         """
@@ -30,13 +40,21 @@ class InfoMP:
         - local: TEXT
         - fotos: TEXT (armazenará caminhos ou JSON se múltiplas fotos)
         - data_cadastro: TEXT (data/hora do cadastro no sistema)
+        - nome_mae: TEXT
+        - nome_pai: TEXT
+        - cpf: TEXT
+        - status_mp: TEXT
+        - numero_mp: TEXT
+        - emissao_mp: TEXT
+        - artigos_mp: TEXT
+        - informe_equipe_aguia: TEXT
         """
         try:
             # Conecta ao banco de dados (cria se não existir)
             conn = sqlite3.connect('corujalocal.db')
             cursor = conn.cursor()
 
-            # Cria a tabela se não existir
+            # Cria a tabela se não existir com as novas colunas
             cursor.execute('''
                 CREATE TABLE IF NOT EXISTS mp_table (
                     id_mp INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -46,26 +64,63 @@ class InfoMP:
                     situacao TEXT NOT NULL,
                     local TEXT,
                     fotos TEXT,
-                    data_cadastro TEXT
+                    data_cadastro TEXT,
+                    nome_mae TEXT,
+                    nome_pai TEXT,
+                    cpf TEXT,
+                    status_mp TEXT,
+                    numero_mp TEXT,
+                    emissao_mp TEXT,
+                    artigos_mp TEXT,
+                    informe_equipe_aguia TEXT
                 )
             ''')
 
-            # Converte a lista de fotos para string JSON se existir
+            # --- Alteração Principal Aqui ---
+            # Processa o campo 'fotos' para garantir que seja uma string simples
             fotos_str = None
-            if self.fotos is not None:
+            if self.fotos:
                 if isinstance(self.fotos, list):
-                    fotos_str = ','.join(self.fotos)
+                    # Pega o primeiro elemento da lista (se for uma lista de caminhos)
+                    fotos_str = self.fotos[0] if self.fotos else None
                 else:
-                    fotos_str = str(self.fotos)
+                    # Assume que já é uma string (caminho único)
+                    fotos_str = self.fotos
+
+                # Remove caracteres indesejados (ex: '[', ']', ou aspas extras)
+                if fotos_str:
+                    fotos_str = fotos_str.strip("[]'\"")  # Limpa a string
+            # --- Fim da Alteração ---
 
             # Data e hora atual para registro do cadastro
             data_cadastro = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-            # Insere os dados
+            values = (
+                self.nome,
+                self.data,
+                self.endereco or None,
+                self.situacao,
+                self.local or None,
+                fotos_str or None,
+                data_cadastro,
+                self.nome_mae or None,
+                self.nome_pai or None,
+                self.cpf or None,
+                self.status_mp or None,
+                self.numero_mp or None,
+                self.emissao_mp or None,
+                self.artigos_mp or None,
+                self.informe_equipe_aguia or None
+            )
+
             cursor.execute('''
-                INSERT INTO mp_table (nome, data, endereco, situacao, local, fotos, data_cadastro)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            ''', (self.nome, self.data, self.endereco, self.situacao, self.local, fotos_str, data_cadastro))
+                INSERT INTO mp_table (
+                    nome, data, endereco, situacao, local, fotos, data_cadastro,
+                    nome_mae, nome_pai, cpf, status_mp, numero_mp, emissao_mp,
+                    artigos_mp, informe_equipe_aguia
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', values)
 
             # Confirma a transação
             conn.commit()
@@ -83,41 +138,36 @@ class InfoMP:
             if conn:
                 conn.close()
 
-    def atualizar_mp_bd(self):
+    def atualizar_mp_bd(self, id_mp=None):
         """
-        Atualiza os dados do mandado de prisão no banco de dados corujalocal.db
+        Atualiza os dados do mandado de prisão no banco de dados com base no ID fornecido.
 
         Parâmetros:
-            Utiliza os atributos atuais do objeto para atualização
+            id_mp (int, opcional): ID do registro a ser atualizado. Se não fornecido, usa self.id_mp
 
-        Retorno:
+        Retorna:
             Tuple (bool, str): (sucesso, mensagem)
-            - sucesso: True se a atualização foi bem-sucedida, False caso contrário
-            - mensagem: Descrição do resultado da operação
-
-        Requisitos:
-            - O objeto deve ter um id_mp válido (já existente no banco)
-            - Pelo menos um campo além do id_mp deve ser modificado
-
-        Exceções:
-            - sqlite3.Error se ocorrer algum problema com o banco de dados
-            - AttributeError se o id_mp não estiver definido
-
-        Exemplo de uso:
-            >>> mp = InfoMP(...)
-            >>> mp.id_mp = 1  # ID existente
-            >>> mp.situacao = "Cancelado"
-            >>> sucesso, msg = mp.atualizar_mp_bd()
         """
-        if not self.id_mp:
+        # Determina qual ID usar (parâmetro ou atributo do objeto)
+        target_id = id_mp if id_mp is not None else self.id_mp
+
+        if not target_id:
             return False, "ID do MP não especificado para atualização"
 
         try:
             conn = sqlite3.connect('corujalocal.db')
             cursor = conn.cursor()
 
-            # Converte fotos para string se for lista
-            fotos_str = ','.join(self.fotos) if isinstance(self.fotos, list) else self.fotos
+            # Tratamento das fotos (convertendo lista para string se necessário)
+            fotos_str = json.dumps(self.fotos) if isinstance(self.fotos, list) else self.fotos
+
+            # Prepara os valores para atualização
+            update_values = (
+                self.nome, self.data, self.endereco, self.situacao,
+                self.local, fotos_str, self.nome_mae, self.nome_pai,
+                self.cpf, self.status_mp, self.numero_mp, self.emissao_mp,
+                self.artigos_mp, self.informe_equipe_aguia, target_id
+            )
 
             cursor.execute('''
                 UPDATE mp_table 
@@ -126,44 +176,47 @@ class InfoMP:
                     endereco = ?, 
                     situacao = ?, 
                     local = ?, 
-                    fotos = ?
+                    fotos = ?,
+                    nome_mae = ?,
+                    nome_pai = ?,
+                    cpf = ?,
+                    status_mp = ?,
+                    numero_mp = ?,
+                    emissao_mp = ?,
+                    artigos_mp = ?,
+                    informe_equipe_aguia = ?
                 WHERE id_mp = ?
-            ''', (self.nome, self.data, self.endereco, self.situacao,
-                  self.local, fotos_str, self.id_mp))
+            ''', update_values)
 
             if cursor.rowcount == 0:
                 return False, "Nenhum registro encontrado com o ID especificado"
 
             conn.commit()
+
+            # Atualiza o id_mp do objeto se foi usado um ID diferente
+            if id_mp is not None and id_mp != self.id_mp:
+                self.id_mp = id_mp
+
             return True, "Registro atualizado com sucesso"
 
         except sqlite3.Error as e:
             return False, f"Erro ao atualizar no banco de dados: {str(e)}"
-
+        except Exception as e:
+            return False, f"Erro inesperado: {str(e)}"
         finally:
-            if conn:
+            if 'conn' in locals():
                 conn.close()
 
     @staticmethod
     def excluir_mp_bd(id_mp):
         """
-        Exclui um mandado de prisão do banco de dados pelo ID
+        Exclui um mandado de prisão do banco de dados pelo ID.
 
         Parâmetros:
             id_mp (int): ID do registro a ser excluído
 
         Retorno:
             Tuple (bool, str): (sucesso, mensagem)
-            - sucesso: True se a exclusão foi bem-sucedida, False caso contrário
-            - mensagem: Descrição do resultado da operação
-
-        Exceções:
-            - sqlite3.Error se ocorrer algum problema com o banco de dados
-
-        Exemplo de uso:
-            >>> sucesso, msg = InfoMP.excluir_mp_bd(1)
-            >>> if sucesso:
-            ...     print("MP excluído com sucesso")
         """
         try:
             conn = sqlite3.connect('corujalocal.db')
@@ -179,48 +232,26 @@ class InfoMP:
 
         except sqlite3.Error as e:
             return False, f"Erro ao excluir do banco de dados: {str(e)}"
-
         finally:
-            if conn:
+            if 'conn' in locals():
                 conn.close()
 
     @staticmethod
     def listar_todos(formatar_json: bool = True) -> Union[List[Dict], str]:
         """
         Lista todos os registros da tabela mp_table com opção de retorno formatado.
-
-        Parâmetros:
-            formatar_json (bool): Se True, retorna os dados em formato JSON.
-                                Se False, retorna uma lista de dicionários.
-                                Default: True
-
-        Retorno:
-            Se formatar_json=True:
-                str: JSON contendo todos os registros ou lista vazia se não houver dados
-            Se formatar_json=False:
-                List[Dict]: Lista de dicionários com os registros ou lista vazia
-
-        Exceções:
-            sqlite3.Error: Se ocorrer erro na conexão ou consulta ao banco de dados
-
-        Exemplo de uso:
-            # Como JSON
-            mps_json = InfoMP.listar_todos()
-            print(mps_json)
-
-            # Como lista de dicionários
-            mps_lista = InfoMP.listar_todos(formatar_json=False)
-            for mp in mps_lista:
-                print(mp['nome'], mp['situacao'])
+        Atualizado para incluir todos os campos.
         """
         conn = None
         try:
             conn = sqlite3.connect('corujalocal.db')
-            conn.row_factory = sqlite3.Row  # Permite acesso aos campos por nome
+            conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
 
             cursor.execute("""
-                SELECT id_mp, nome, data, endereco, situacao, local, fotos, data_cadastro
+                SELECT id_mp, nome, data, endereco, situacao, local, fotos, data_cadastro,
+                       nome_mae, nome_pai, cpf, status_mp, numero_mp, emissao_mp,
+                       artigos_mp, informe_equipe_aguia
                 FROM mp_table
                 ORDER BY data DESC, nome ASC
             """)
@@ -230,20 +261,20 @@ class InfoMP:
             if not resultados:
                 return json.dumps([]) if formatar_json else []
 
-            # Converte para lista de dicionários
-            registros = [dict(linha) for linha in resultados]
-
-            # Converte fotos de string para lista se necessário
-            for registro in registros:
+            # Converte para lista de dicionários (mantendo o tratamento existente de fotos)
+            registros = []
+            for linha in resultados:
+                registro = dict(linha)
+                # Mantém o mesmo tratamento de fotos do original
                 if registro['fotos'] and isinstance(registro['fotos'], str):
                     registro['fotos'] = registro['fotos'].split(',')
+                registros.append(registro)
 
             return json.dumps(registros, indent=4, ensure_ascii=False) if formatar_json else registros
 
         except sqlite3.Error as e:
-            print(f"Erro ao consultar MP's: {str(e)}")
+            print(f"Erro ao consultar MPs: {str(e)}")
             return json.dumps({"erro": str(e)}) if formatar_json else []
-
         finally:
             if conn:
                 conn.close()
@@ -251,22 +282,8 @@ class InfoMP:
     @staticmethod
     def buscar_por_id(id_mp: int) -> Optional['InfoMP']:
         """
-        Busca um Mandado de Prisão pelo ID e retorna um objeto InfoMP
-
-        Parâmetros:
-            id_mp (int): ID do registro a ser buscado
-
-        Retorno:
-            Optional[InfoMP]: Retorna o objeto InfoMP se encontrado, None caso contrário
-
-        Exemplo de uso:
-            mp = InfoMP.buscar_por_id(1)
-            if mp:
-                print(f"Encontrado MP: {mp.nome}")
-                mp.situacao = "Atualizado"
-                mp.atualizar_mp_bd()
-            else:
-                print("MP não encontrado")
+        Busca um Mandado de Prisão pelo ID e retorna um objeto InfoMP completo.
+        Atualizado para incluir todos os campos.
         """
         conn = None
         try:
@@ -275,7 +292,9 @@ class InfoMP:
             cursor = conn.cursor()
 
             cursor.execute("""
-                SELECT id_mp, nome, data, endereco, situacao, local, fotos
+                SELECT id_mp, nome, data, endereco, situacao, local, fotos,
+                       nome_mae, nome_pai, cpf, status_mp, numero_mp, emissao_mp,
+                       artigos_mp, informe_equipe_aguia
                 FROM mp_table
                 WHERE id_mp = ?
             """, (id_mp,))
@@ -285,7 +304,7 @@ class InfoMP:
             if not resultado:
                 return None
 
-            # Converte a string de fotos para lista se existir
+            # Mantém o mesmo tratamento de fotos do original
             fotos = resultado['fotos'].split(',') if resultado['fotos'] else None
 
             return InfoMP(
@@ -295,13 +314,20 @@ class InfoMP:
                 endereco=resultado['endereco'],
                 situacao=resultado['situacao'],
                 local=resultado['local'],
-                fotos=fotos
+                fotos=fotos,
+                nome_mae=resultado['nome_mae'],
+                nome_pai=resultado['nome_pai'],
+                cpf=resultado['cpf'],
+                status_mp=resultado['status_mp'],
+                numero_mp=resultado['numero_mp'],
+                emissao_mp=resultado['emissao_mp'],
+                artigos_mp=resultado['artigos_mp'],
+                informe_equipe_aguia=resultado['informe_equipe_aguia']
             )
 
         except sqlite3.Error as e:
             print(f"Erro ao buscar MP: {str(e)}")
             return None
-
         finally:
             if conn:
                 conn.close()

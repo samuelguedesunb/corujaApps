@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Página de detalhes do procurado">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Detalhes do Procurado - ALI 9 BPM</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="{{ url_for('static', filename='css/album.css') }}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+      .procurado-header {
+        position: relative;
+        margin-bottom: 2rem;
+        text-align: center;
+      }
+      .procurado-img {
+        width: 200px;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 3px solid #fff;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+      }
+      .procurado-badge {
+        position: absolute;
+        top: 10px;
+        right: calc(50% - 100px);
+        transform: translateX(50%);
+        font-size: 1rem;
+      }
+      .info-card {
+        margin-bottom: 1.5rem;
+        border-left: 4px solid #2a5298;
+      }
+      .info-title {
+        color: #2a5298;
+        font-weight: 600;
+      }
+      .info-value {
+        font-size: 1.1rem;
+      }
+      .nav-pills .nav-link.active {
+        background-color: #2a5298;
+      }
+      .nav-pills .nav-link {
+        color: #2a5298;
+      }
+      .nome-procurado {
+        text-align: center;
+        margin-top: 1rem;
+      }
+      .priority-badge {
+        display: inline-block;
+        margin-top: 0.5rem;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- Início Header -->
+    <header>
+      <div class="collapse bg-dark" id="navbarHeader">
+        <div class="container">
+          <div class="row">
+            <div class="col-sm-8 col-md-7 py-4">
+              <h4 class="text-white">Sobre</h4>
+              <p class="text-muted">Sistema de gerenciamento de mandados de prisão.</p>
+            </div>
+            <div class="col-sm-4 offset-md-1 py-4">
+              <h4 class="text-white">Contato</h4>
+              <ul class="list-unstyled">
+                <li><a href="#" class="text-white">Relatar erro</a></li>
+                <li><a href="#" class="text-white">Sugerir melhoria</a></li>
+                <li><a href="#" class="text-white">Ajuda</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="navbar navbar-dark bg-dark box-shadow">
+        <div class="container d-flex justify-content-between">
+            <a href="index_mp.html" class="navbar-brand d-flex align-items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 512 512" fill="currentColor" class="mr-2">
+                    <path d="M473.7 164c21.5-58.4 30.7-136.9 30.3-136 0 0-20.5 41.1-69.4 92.1l-2.6-1.9c-40.3-31.3-98.4-50.2-176-50.2-77.7 0-135.7 18.9-176 50.2l-2.7 1.8c-49-51-72.8-69-93.3-92-0.4-0.9 8.8 77.6 30.3 136h-0.1C17.8 196.3 8 234.8 8 276c0 114.9 111 208 248 208s248-93.1 248-208c0-41.2-9.7-79.7-30.2-112z"/>
+                    <path fill="#FFEBD2" d="M307.6 314h-51.3h-51.3L25.3 347c25.7 88 111.2 88 136.9 88 25.7 0 68.4 40 94.1 40 25.7 0 68.4-40 94.1-40 25.7 0 111.2 0 136.9-88L307.6 314z"/>
+                    <path fill="#CFBAA4" d="M140 240l20.3 128c47.8-15.9 74.4 24.5 87 58.2 3 8.3 15 8.3 18.1 0 12.5-33.7 39.2-74.2 87-58.2l20.7-128C307 325.4 202 327.9 140 240z"/>
+                    <circle cx="256" cy="380" r="24" fill="#464655"/>
+                    <path fill="#DC9B5A" d="M461.9 234.7c-7.8-34.3-25.3-63-47.3-81.7-2.8-2.3-14.1 11.1-16.3 22-10.2 50.8-58.9 115-91.3 150 0 0 24.1 34.8 35 46 14.1 14.6 35.6 14.2 54.7 9.8 65.2-14.9 94.4-80.3 78.7-149.3zM110.2 175c-3.4-9.5-10.5-23.5-12.3-22-22 18.7-39.5 47.3-47.3 81.7-15.7 68.9 13.5 134.4 65.2 146.1 19.2 4.4 37.5 4.4 52.1-9.8 12.8-12.4 38-44 38-44C171.3 288.3 128 224.7 110.2 175z"/>
+                    <path fill="#FFCE56" d="M376.3 344c26.5 0 48-21.5 48-48s-21.5-48-48-48c-3.8 0-7.6 0.5-11.1 1.3-11.4 18.2-24.3 35.7-36.7 50.8 0 0 20.6 19.3 45.7 19.3zM88.3 296c0 26.5 21.5 48 48 48 25 0 45.4-19 47.8-43.4-12.2-15.7-24.6-33.2-35.9-51.1-3.8-1-7.8-1.5-11.9-1.5-26.5 0-48 21.5-48 48z"/>
+                    <circle cx="374" cy="290" r="15" fill="#464655"/>
+                    <circle cx="134" cy="290" r="15" fill="#464655"/>
+                </svg>
+                <strong>ALI 9 BPM</strong>
+              </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Banner -->
+    <main role="main">
+      <section class="jumbotron text-center" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 25%, #7db9e8 50%, #1e3c72 100%); color: white; padding: 2rem 1rem;">
+        <div class="container">
+          <h1 class="jumbotron-heading">Detalhes do Procurado</h1>
+          <p class="lead" style="color: rgba(255,255,255,0.8)">Informações detalhadas sobre o mandado de prisão</p>
+          <p>
+            <a href="{{ url_for('mp_pagina') }}" class="btn btn-light my-2"><i class="fas fa-arrow-left"></i> Voltar para lista</a>
+            <a href="#" class="btn btn-outline-light my-2"><i class="fas fa-print"></i> Imprimir</a>
+          </p>
+        </div>
+      </section>
+
+      <div class="container py-5">
+        <!-- Cabeçalho com foto quadrada centralizada -->
+        <div class="procurado-header">
+          <div style="position: relative; display: inline-block;">
+          <img src="{{ url_for('static', filename=procurado.fotos|replace("['", "")|replace("']", "")|replace("'", "") if procurado.fotos else 'images/image.png') }}" alt="Foto do procurado" class="procurado-img">
+          </div>
+          <h2 class="nome-procurado">{{ procurado.nome }} </h2>
+          <span class="badge badge-warning priority-badge">{{ procurado.situacao }}</span>
+        </div>
+
+        <!-- Navegação por tabs -->
+        <ul class="nav nav-pills mb-4 justify-content-center" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="dados-tab" data-toggle="pill" href="#dados" role="tab">Dados Pessoais</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="mandado-tab" data-toggle="pill" href="#mandado" role="tab">Mandado</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="locais-tab" data-toggle="pill" href="#locais" role="tab">Locais Frequentes</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="contatos-tab" data-toggle="pill" href="#contatos" role="tab">Contatos</a>
+          </li>
+        </ul>
+
+        <!-- Conteúdo das tabs -->
+        <div class="tab-content" id="myTabContent">
+          <!-- Tab Dados Pessoais -->
+          <div class="tab-pane fade show active" id="dados" role="tabpanel">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card info-card">
+                  <div class="card-body">
+                    <h5 class="info-title">Dados Pessoais</h5>
+                    <p class="info-value"><strong>Nome Completo:</strong> {{ procurado.nome }}</p>
+                    <p class="info-value"><strong>Data expedição do MP:</strong> {{ procurado.data }}</p>
+                    <p class="info-value"><strong>Mãe:</strong> {{ procurado.nome_mae }}</p>
+                    <p class="info-value"><strong>Pai:</strong> {{ procurado.nome_pai }}</p>
+                    <p class="info-value"><strong>CPF:</strong> {{ procurado.cpf }}</p>
+                  </div>
+                </div>
+
+
+              </div>
+
+              <div class="col-md-6">
+                <div class="card info-card">
+                    <div class="card-body">
+                      <h5 class="info-title">Endereço</h5>
+                      <p class="info-value"><strong>Residência:</strong> {{ procurado.endereco}}</p>
+                      <p class="info-value"><strong>Setor Area</strong> {{ procurado.local }}</p>
+                      <p class="info-value"><strong>Observações:</strong> {{ procurado.informe_equipe_aguia }}</p>
+                    </div>
+                  </div>
+
+                <div class="card info-card">
+                  <div class="card-body">
+                    <h5 class="info-title">Endereço</h5>
+                    <p class="info-value"><strong>Residência:</strong> Qr 12 Conjunto A Casa 15 - Gama/DF</p>
+                    <p class="info-value"><strong>Última atualização:</strong> 10/02/2023</p>
+                    <p class="info-value"><strong>Observações:</strong> Pode estar residindo com a irmã no Park Way</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Mandado -->
+          <div class="tab-pane fade" id="mandado" role="tabpanel">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card info-card">
+                  <div class="card-body">
+                    <h5 class="info-title">Dados do Mandado</h5>
+                    <p class="info-value"><strong>Número Processo:</strong> {{ procurado.numero_mp }}</p>
+                    <p class="info-value"><strong>Data Emissão:</strong> {{ procurado.data }}</p>
+                    <p class="info-value"><strong>Vara/Comarca:</strong> 2ª Vara Criminal do Gama</p>
+                    <p class="info-value"><strong>Juiz:</strong> Dr. Carlos Eduardo Mendes</p>
+                    <p class="info-value"><strong>Delegado:</strong> Dra. Ana Paula Silva</p>
+                    <p class="info-value"><strong>Status:</strong> Em aberto</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <div class="card info-card">
+                  <div class="card-body">
+                    <h5 class="info-title">Crime(s) Imputado(s)</h5>
+                    <p class="info-value"><span class="badge badge-danger">{{ procurado.artigos_mp }}</span></p>
+                    <p class="info-value"><span class="badge badge-danger">Art. 157 - Roubo majorado</span></p>
+                    <hr>
+                    <h5 class="info-title">Descrição do Crime</h5>
+                    <p>.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Locais Frequentes -->
+          <div class="tab-pane fade" id="locais" role="tabpanel">
+            <div class="card info-card">
+              <div class="card-body">
+                <h5 class="info-title">Locais Frequentes</h5>
+                <div class="row">
+                  <div class="col-md-6">
+                    <p class="info-value"><strong>Bar do Zé:</strong> Qr 12 Conjunto B - Frequenta às sextas e sábados</p>
+                    <p class="info-value"><strong>Casa da irmã:</strong> Qr 15 Conjunto C Casa 8 - Park Way</p>
+                  </div>
+                  <div class="col-md-6">
+                    <p class="info-value"><strong>Academia SmartFit:</strong> Shopping do Gama - Frequenta pela manhã</p>
+                    <p class="info-value"><strong>Trajeto trabalho:</strong> Sai de casa por volta das 7h em direção ao Plano Piloto</p>
+                  </div>
+                </div>
+                <hr>
+                <h5 class="info-title">Mapa de Locais Frequentes</h5>
+                <div class="embed-responsive embed-responsive-16by9">
+                  <iframe class="embed-responsive-item" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3837.987855999895!2d-47.983788924687!3d-15.83648532289025!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTXCsDUwJzExLjMiUyA0N8KwNTgnNTkuNyJX!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab Contatos -->
+          <div class="tab-pane fade" id="contatos" role="tabpanel">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card info-card">
+                  <div class="card-body">
+                    <h5 class="info-title">Contatos Pessoais</h5>
+                    <p class="info-value"><strong>Telefone 1:</strong> (61) 99999-8888 (WhatsApp)</p>
+                    <p class="info-value"><strong>Telefone 2:</strong> (61) 99999-7777</p>
+                    <p class="info-value"><strong>E-mail:</strong> joaozinho@gmail.com</p>
+                    <p class="info-value"><strong>Redes Sociais:</strong> @joaozinho (Facebook e Instagram)</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Ações -->
+        <div class="row mt-4">
+          <div class="col-md-12 text-center">
+            <button class="btn btn-danger btn-lg mr-3"><i class="fas fa-handcuffs"></i> Registrar Prisão</button>
+            <button class="btn btn-warning btn-lg mr-3"><i class="fas fa-edit"></i> Editar Informações</button>
+            <button class="btn btn-secondary btn-lg"><i class="fas fa-flag"></i> Reportar Avistamento</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-muted py-4">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1">Sistema de Gerenciamento de Mandados de Prisão - ALI 9 BPM</p>
+            <p class="mb-0">Versão 1.0 - © 2023 Polícia Militar do Distrito Federal</p>
+          </div>
+          <div class="col-md-6 text-right">
+            <p class="mb-1">Última atualização: 20/06/2023 14:35</p>
+            <p class="mb-0">Usuário: <strong>Sgt. Silva</strong></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+  </body>
+</html>
