@@ -142,9 +142,6 @@
           <li class="nav-item">
             <a class="nav-link" id="locais-tab" data-toggle="pill" href="#locais" role="tab">Locais Frequentes</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" id="contatos-tab" data-toggle="pill" href="#contatos" role="tab">Contatos</a>
-          </li>
         </ul>
 
         <!-- Conteúdo das tabs -->
@@ -172,19 +169,10 @@
                     <div class="card-body">
                       <h5 class="info-title">Endereço</h5>
                       <p class="info-value"><strong>Residência:</strong> {{ procurado.endereco}}</p>
-                      <p class="info-value"><strong>Setor Area</strong> {{ procurado.local }}</p>
-                      <p class="info-value"><strong>Observações:</strong> {{ procurado.informe_equipe_aguia }}</p>
+                      <p class="info-value"><strong>Área:</strong> {{ procurado.local }}</p>
+                      <p class="info-value"><strong>Informações Iniciais:</strong> {{ procurado.informe_equipe_aguia }}</p>
                     </div>
                   </div>
-
-                <div class="card info-card">
-                  <div class="card-body">
-                    <h5 class="info-title">Endereço</h5>
-                    <p class="info-value"><strong>Residência:</strong> Qr 12 Conjunto A Casa 15 - Gama/DF</p>
-                    <p class="info-value"><strong>Última atualização:</strong> 10/02/2023</p>
-                    <p class="info-value"><strong>Observações:</strong> Pode estar residindo com a irmã no Park Way</p>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -198,10 +186,6 @@
                     <h5 class="info-title">Dados do Mandado</h5>
                     <p class="info-value"><strong>Número Processo:</strong> {{ procurado.numero_mp }}</p>
                     <p class="info-value"><strong>Data Emissão:</strong> {{ procurado.data }}</p>
-                    <p class="info-value"><strong>Vara/Comarca:</strong> 2ª Vara Criminal do Gama</p>
-                    <p class="info-value"><strong>Juiz:</strong> Dr. Carlos Eduardo Mendes</p>
-                    <p class="info-value"><strong>Delegado:</strong> Dra. Ana Paula Silva</p>
-                    <p class="info-value"><strong>Status:</strong> Em aberto</p>
                   </div>
                 </div>
               </div>
@@ -211,7 +195,6 @@
                   <div class="card-body">
                     <h5 class="info-title">Crime(s) Imputado(s)</h5>
                     <p class="info-value"><span class="badge badge-danger">{{ procurado.artigos_mp }}</span></p>
-                    <p class="info-value"><span class="badge badge-danger">Art. 157 - Roubo majorado</span></p>
                     <hr>
                     <h5 class="info-title">Descrição do Crime</h5>
                     <p>.</p>
@@ -244,30 +227,13 @@
               </div>
             </div>
           </div>
-
-          <!-- Tab Contatos -->
-          <div class="tab-pane fade" id="contatos" role="tabpanel">
-            <div class="row">
-              <div class="col-md-6">
-                <div class="card info-card">
-                  <div class="card-body">
-                    <h5 class="info-title">Contatos Pessoais</h5>
-                    <p class="info-value"><strong>Telefone 1:</strong> (61) 99999-8888 (WhatsApp)</p>
-                    <p class="info-value"><strong>Telefone 2:</strong> (61) 99999-7777</p>
-                    <p class="info-value"><strong>E-mail:</strong> joaozinho@gmail.com</p>
-                    <p class="info-value"><strong>Redes Sociais:</strong> @joaozinho (Facebook e Instagram)</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
 
         <!-- Ações -->
         <div class="row mt-4">
           <div class="col-md-12 text-center">
             <button class="btn btn-danger btn-lg mr-3"><i class="fas fa-handcuffs"></i> Registrar Prisão</button>
-            <button class="btn btn-warning btn-lg mr-3"><i class="fas fa-edit"></i> Editar Informações</button>
+            <a href="{{ url_for('edit_mp', mp_id=procurado.id_mp) }}" class="btn btn-warning btn-lg mr-3"><i class="fas fa-edit"></i> Editar Informações</a>
             <button class="btn btn-secondary btn-lg"><i class="fas fa-flag"></i> Reportar Avistamento</button>
           </div>
         </div>
@@ -283,7 +249,7 @@
           </div>
           <div class="col-md-6 text-right">
             <p class="mb-1">Última atualização: 20/06/2023 14:35</p>
-            <p class="mb-0">Usuário: <strong>Sgt. Silva</strong></p>
+            <p class="mb-0">Usuário: <strong>ALI 9 BPM</strong></p>
           </div>
         </div>
       </div>

@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Página de cadastro MP">
+    <meta name="author" content="">
+    <link rel="icon" href="/docs/4.0/assets/img/favicons/favicon.ico">
+
+    <title>Novo cadastro MP</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Custom styles -->
+    <style>
+      :root {
+        --primary-color: #2a5298;
+        --secondary-color: #1e3c72;
+        --accent-color: #7db9e8;
+      }
+
+      body {
+        background-color: #f8f9fa;
+      }
+
+      .form-header {
+        background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
+        color: white;
+        border-radius: 8px 8px 0 0;
+        padding: 1.5rem;
+        margin-bottom: 0;
+      }
+
+      .form-container {
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        margin-bottom: 2rem;
+      }
+
+      .form-section {
+        padding: 2rem;
+      }
+
+      .section-title {
+        color: var(--primary-color);
+        border-bottom: 2px solid var(--accent-color);
+        padding-bottom: 0.5rem;
+        margin-bottom: 1.5rem;
+        font-weight: 600;
+      }
+
+      .form-label {
+        font-weight: 500;
+        color: #495057;
+      }
+
+      .form-control, .form-select {
+        border-radius: 4px;
+        padding: 0.75rem 1rem;
+        border: 1px solid #ced4da;
+        transition: all 0.3s;
+      }
+
+      .form-control:focus, .form-select:focus {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 0 0.25rem rgba(41, 82, 152, 0.25);
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.3s;
+      }
+
+      .btn-primary:hover {
+        background-color: var(--secondary-color);
+        border-color: var(--secondary-color);
+        transform: translateY(-2px);
+      }
+
+      .form-group {
+        margin-bottom: 1.5rem;
+      }
+
+      .form-row {
+        margin-bottom: 1rem;
+      }
+
+      .photo-upload {
+        border: 2px dashed #ced4da;
+        border-radius: 8px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .photo-upload:hover {
+        border-color: var(--accent-color);
+        background-color: rgba(125, 185, 232, 0.05);
+      }
+
+      .photo-icon {
+        font-size: 3rem;
+        color: var(--primary-color);
+        margin-bottom: 1rem;
+      }
+
+      @media (max-width: 768px) {
+        .form-section {
+          padding: 1.5rem;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+    <!-- Header -->
+    <header>
+      <div class="navbar navbar-dark bg-dark box-shadow">
+        <div class="container d-flex justify-content-between">
+          <a href="index_mp.html" class="navbar-brand d-flex align-items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 512 512" fill="currentColor" class="mr-2">
+              <!-- SVG do logo -->
+            </svg>
+            <strong>ALI 9 BPM</strong>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Banner -->
+    <main role="main">
+      <section class="jumbotron text-center" style="background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 25%, var(--accent-color) 50%, var(--secondary-color) 100%); color: white; padding: 2rem 1rem;">
+        <div class="container">
+          <h1 class="jumbotron-heading">Cadastro Novo MP</h1>
+          <p class="lead" style="color: rgba(255,255,255,0.8)">Página de cadastro de novo procurado</p>
+          <p>
+            <a href="{{ url_for('mp_pagina') }}" class="btn btn-light my-2"><i class="fas fa-arrow-left"></i> Voltar para lista</a>
+          </p>
+        </div>
+      </section>
+
+      <!-- Formulário -->
+      <div class="container">
+        <div class="row justify-content-center">
+          <div class="col-lg-10">
+            <div class="form-container">
+              <h3 class="form-header"><i class="fas fa-user-edit me-2"></i>Dados do MP</h3>
+
+              <form method="POST" action="{{ url_for('edit_mp', mp_id=mp.id_mp) if edicao else url_for('new_mp') }}" class="form-section" enctype="multipart/form-data">
+                {{ form.csrf_token }}
+
+                <!-- Seção 1: Dados Pessoais -->
+                <h4 class="section-title">Dados Procurado</h4>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      {{ form.nome.label(class="form-label") }}
+                      {{ form.nome(class="form-control", placeholder="Nome completo do procurado") }}
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      {{ form.cpf.label(class="form-label") }}
+                      {{ form.cpf(class="form-control", placeholder="000.000.000-00") }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      {{ form.nome_mae.label(class="form-label") }}
+                      {{ form.nome_mae(class="form-control", placeholder="Nome completo da mãe") }}
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      {{ form.nome_pai.label(class="form-label") }}
+                      {{ form.nome_pai(class="form-control", placeholder="Nome completo do pai") }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      {{ form.endereco.label(class="form-label") }}
+                      {{ form.endereco(class="form-control", placeholder="Endereço completo") }}
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      {{ form.local.label(class="form-label") }}
+                      {{ form.local(class="form-select") }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Seção 2: Dados do MP -->
+                <h4 class="section-title mt-4">Dados do Mandado</h4>
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      {{ form.numero_mp.label(class="form-label") }}
+                      {{ form.numero_mp(class="form-control", placeholder="Número do MP") }}
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      {{ form.data.label(class="form-label") }}
+                      {{ form.data(class="form-control datepicker", placeholder="DD/MM/AAAA") }}
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      {{ form.artigo_crime.label(class="form-label") }}
+                      {{ form.artigo_crime(class="form-control", placeholder="Artigo do crime") }}
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      {{ form.situacao.label(class="form-label") }}
+                      {{ form.situacao(class="form-select") }}
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Seção 3: INFORMAÇÕES EQUIPE AGUIA -->
+                <h4 class="section-title mt-4"><i class="fas fa-info-circle me-2"></i>Informações</h4>
+                <div class="form-group">
+                    {{ form.info_aguia.label(class="form-label") }}
+                    {{ form.info_aguia(class="form-control", rows="2", maxlength="200", placeholder="Informações relevantes para a equipe") }}
+                </div>
+
+                <!-- Seção 3: Foto -->
+                <h4 class="section-title mt-4"><i class="fas fa-camera me-2"></i>FOTO</h4>
+
+                {% if foto_atual %}
+                <div class="mb-3">
+                    <img src="{{ foto_atual }}" class="img-thumbnail"
+                         style="max-width: 200px; max-height: 200px; object-fit: cover; display: block; margin: 0 auto;">
+                    <p class="text-center text-muted small mt-2">Foto atual</p>
+                </div>
+                {% endif %}
+
+                <div class="photo-upload" onclick="document.getElementById('fotoProcurado').click()">
+                    <div class="photo-icon" id="photoPreview">
+                        {% if foto_atual %}
+                            <img src="{{ foto_atual }}" class="img-fluid rounded-circle"
+                                 style="width:120px;height:120px;object-fit:cover;">
+                        {% else %}
+                            <i class="fas fa-user-circle fa-5x text-secondary"></i>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted text-center mt-2">
+                        {% if foto_atual %}Clique para alterar a foto{% else %}Clique para adicionar foto{% endif %}
+                    </p>
+                    {{ form.foto(class="form-control", type="file", id="fotoProcurado", style="display: none;", accept="image/*") }}
+                </div>
+
+                <!-- Botões de ação -->
+                <div class="d-flex justify-content-between mt-5">
+                  <button type="reset" class="btn btn-outline-secondary">
+                    <i class="fas fa-eraser me-2"></i>Limpar
+                  </button>
+                  <div>
+                    <a href="{{ url_for('mp_pagina') }}" class="btn btn-outline-danger me-2">
+                      <i class="fas fa-times me-2"></i>Cancelar
+                    </a>
+                    {{ form.submit(class="btn btn-primary") }}
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="text-muted py-4 bg-light mt-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6">
+            <p class="mb-1">Sistema de Gerenciamento de Mandados de Prisão - ALI 9 BPM</p>
+            <p class="mb-0">Versão 1.0 - © 2023 Polícia Militar do Distrito Federal</p>
+          </div>
+          <div class="col-md-6 text-md-right">
+            <p class="mb-1">Última atualização: {{ data_atual }}</p>
+            <p class="mb-0">Usuário: <strong>{{ usuario }}</strong></p>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+    <!-- Scripts personalizados -->
+    <script>
+      $(document).ready(function() {
+        // Adiciona máscara para CPF
+        $('#cpf').mask('000.000.000-00', {reverse: true});
+
+        // Adiciona máscara para data
+        $('#data').mask('00/00/0000');
+
+        // Foto upload
+        $('.photo-upload').click(function() {
+          $('#fotoProcurado').click();
+        });
+
+        $('#fotoProcurado').change(function(e) {
+          if (e.target.files.length > 0) {
+            const file = e.target.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function(event) {
+              $('.photo-icon').html(`<img src="${event.target.result}" class="img-thumbnail rounded-circle" style="width:120px;height:120px;object-fit:cover;">`);
+              $('.photo-upload p').text('Foto adicionada').css('color', 'var(--primary-color)');
+            }
+
+            reader.readAsDataURL(file);
+          }
+        });
+      });
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('fotoProcurado');
+
+    if (fileInput) {
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const preview = document.getElementById('photoPreview');
+                    preview.innerHTML = `<img src="${event.target.result}" class="img-thumbnail rounded-circle" style="width:120px;height:120px;object-fit:cover;">`;
+
+                    // Atualiza o texto abaixo
+                    const uploadText = preview.nextElementSibling;
+                    if (uploadText) {
+                        uploadText.textContent = `Alterar para: ${file.name}`;
+                        uploadText.style.color = '#2a5298';
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+});
+    </script>
+  </body>
+</html>
